@@ -1,78 +1,111 @@
-# Customer Churn Prediction
+# 📊 Customer Churn Prediction & Retention Intelligence
 
-An end-to-end machine learning application that predicts whether a customer is likely to churn and provides a churn probability, risk level, model-based explanations, and input data validation.
+An end-to-end **Machine Learning Customer Churn Prediction** application that predicts whether a customer is likely to leave a service. The project combines a trained Machine Learning model with a **FastAPI backend** and a **React frontend** to provide real-time churn probability, risk classification, feature-based explanations, and data-quality validation.
+
+---
 
 ## 🚀 Project Overview
 
-Customer churn occurs when a customer stops using a company's services. Predicting churn in advance can help businesses identify high-risk customers and take appropriate retention actions.
+Customer churn is a major challenge for businesses because losing existing customers can directly affect revenue and growth.
 
-This project uses **Logistic Regression** to predict customer churn based on customer demographics, service usage, contract information, billing details, satisfaction, and customer lifetime value.
+This project uses customer demographic, service, contract, billing, satisfaction, and customer-value information to predict whether a customer is likely to churn.
 
-The machine learning model is integrated with a **FastAPI backend** and a **React frontend** to provide real-time predictions through an interactive web application.
+The application provides:
 
-## ✨ Features
+- 🤖 Machine Learning-based churn prediction
+- 📊 Churn probability
+- 🟢 LOW / 🟡 MEDIUM / 🔴 HIGH risk classification
+- 🔍 "Why This Prediction?" feature explanations
+- ⚠️ Realistic-data validation
+- ⚡ Real-time predictions through FastAPI
+- 💻 Interactive React dashboard
 
-- Customer churn prediction
-- Churn probability calculation
-- LOW / MEDIUM / HIGH risk classification
-- Model explainability with "Why This Prediction?"
-- Realistic-data validation
-- Form input validation
-- Interactive React user interface
-- FastAPI REST API
-- Saved ML model and preprocessing pipeline
-- End-to-end prediction workflow
+---
 
-## 🧠 Machine Learning
+## 🎯 Project Objectives
 
-### Model
+The main objectives of this project are:
 
-The project uses **Logistic Regression** for binary classification.
+1. Analyze customer data and identify churn patterns.
+2. Build a Machine Learning model to predict customer churn.
+3. Select a practical set of customer features.
+4. Deploy the trained model through a FastAPI REST API.
+5. Build an interactive React frontend.
+6. Provide understandable explanations for model predictions.
+7. Detect unrealistic combinations in customer input data.
 
-The target variable is:
+---
 
-- `0` → No Churn
-- `1` → Churn
+## 🧠 Machine Learning Model
 
-Hyperparameter tuning was performed using `GridSearchCV`.
+The final model uses **Logistic Regression**.
 
-The final model uses:
+### Why Logistic Regression?
+
+Logistic Regression is suitable for this problem because churn prediction is a **binary classification problem**:
+
+- `0 → No Churn`
+- `1 → Churn`
+
+It also provides model coefficients that can be used to understand which features contribute toward churn risk.
+
+### Hyperparameter Tuning
+
+GridSearchCV was used to find the best value of `C`.
+
+Tested values:
+
+```text
+0.01
+0.1
+1
+10
+100
+```
+
+The best value was:
 
 ```text
 C = 10
 ```
 
-### Model Performance
+The model was evaluated using **F1-score** during cross-validation because the churn classes are imbalanced.
 
-The final model achieved:
+---
 
-| Metric | Score |
+## 📈 Model Performance
+
+Final Logistic Regression model:
+
+| Metric | Result |
 |---|---:|
 | Accuracy | **95.74%** |
 | Churn Precision | **95%** |
 | Churn Recall | **89%** |
-| Churn F1-Score | **92%** |
+| Churn F1-score | **92%** |
+| Best C | **10** |
 
-The model was evaluated using a stratified train-test split.
+The model was reduced from the original feature set to **25 practical customer features** while maintaining strong predictive performance.
 
-## 📊 Features Used
+---
 
-The final model uses **25 customer features**.
+## 🔢 Features Used
 
-### Customer Profile
+The final model uses **25 input features**.
+
+### 👤 Customer Profile
 
 - Gender
 - Age
 - Married
 - Dependents
 
-### Customer Relationship
+### 📅 Customer Relationship
 
 - Tenure in Months
 
-### Services
+### 📱 Services
 
-- Offer
 - Phone Service
 - Multiple Lines
 - Internet Service
@@ -86,64 +119,94 @@ The final model uses **25 customer features**.
 - Streaming Music
 - Unlimited Data
 
-### Contract & Billing
+### 📄 Contract & Billing
 
 - Contract
 - Paperless Billing
 - Payment Method
+- Offer
 
-### Financial & Customer Value
+### 💰 Financial Information
 
 - Monthly Charge
 - Total Charges
+
+### ⭐ Customer Value & Satisfaction
+
 - Satisfaction Score
 - CLTV
 
+---
+
 ## 🔍 Exploratory Data Analysis
 
-The dataset was analyzed to understand patterns associated with customer churn.
+Several important patterns were identified during EDA.
 
-Some important observations included:
+### Contract
 
-- Month-to-month contract customers showed substantially higher churn.
-- Customers with shorter tenure were more likely to churn.
-- Higher monthly charges were associated with higher churn.
-- Fiber Optic customers showed higher churn compared with some other internet types.
-- Customers without Online Security showed higher churn.
-- Payment method was also associated with differences in churn rates.
+Customers with month-to-month contracts showed substantially higher churn than customers with one-year or two-year contracts.
 
-These observations describe **associations in the dataset and do not imply causation**.
+### Tenure
 
-## 🔎 Model Explainability
+Customers who churned generally had much shorter tenure than customers who stayed.
+
+### Monthly Charges
+
+Churned customers generally had higher monthly charges.
+
+### Internet Type
+
+Fiber Optic customers showed a higher churn rate compared with DSL and customers without internet service.
+
+### Online Security
+
+Customers without Online Security showed higher churn rates.
+
+### Payment Method
+
+Churn rates varied across different payment methods.
+
+These observations helped understand customer behavior and select meaningful features.
+
+> **Note:** EDA findings show associations in the dataset and do not prove that a particular feature directly causes churn.
+
+---
+
+## 🔍 Model Explainability
 
 The application includes a **"Why This Prediction?"** section.
 
-For each prediction, the application calculates feature contributions using the Logistic Regression coefficients and the customer's transformed feature values.
+Instead of only displaying:
+
+```text
+CHURN
+99% probability
+```
+
+the application also identifies important factors contributing to the prediction.
+
+The explanation is calculated using the Logistic Regression model's actual coefficients and the customer's transformed feature values.
+
+Conceptually:
+
+```text
+Contribution = Transformed Feature Value × Model Coefficient
+```
 
 The application displays:
 
-- Top factors increasing churn risk
-- Top factors reducing churn risk
+- 🔴 Factors increasing churn risk
+- 🟢 Factors reducing churn risk
 
-For example:
+The top contributing features are shown to make the prediction easier to understand.
 
-```text
-Increasing churn risk
-+ Satisfaction Score
-+ Monthly Charge
-+ Online Security
+> Feature contributions represent model associations and should not be interpreted as causal relationships.
 
-Reducing churn risk
-- Tenure
-- Contract
-- Other customer features
-```
-
-This helps users understand why the model produced a particular prediction.
+---
 
 ## ⚠️ Realistic Data Validation
 
-The application also performs a basic data-quality check before prediction.
+The application also checks whether the customer's financial information is realistic.
 
 For example:
 
@@ -153,48 +216,77 @@ Monthly Charge = ₹90
 Total Charges = ₹90
 ```
 
-The approximate expected charges are:
+Expected charges:
 
 ```text
 72 × ₹90 = ₹6,480
 ```
 
-Since ₹90 is unusually low compared with the expected amount, the application displays a warning asking the user to verify the entered values.
+Since ₹90 is unusually low compared with the expected total charges, the application displays a warning.
 
-The warning is **non-blocking**, so the ML prediction can still be generated.
+### Important
 
-This validation is separate from the machine learning model.
+The validation is **non-blocking**.
+
+The user can still make the prediction after seeing the warning.
+
+This keeps data-quality checking separate from the Machine Learning prediction logic.
+
+---
+
+## 🖥️ Application Screenshots
+
+### Customer Input & Prediction Dashboard
+
+![Customer Input Dashboard](screenshots/home.png)
+
+### Low-Risk Customer Prediction
+
+![Low-Risk Prediction](screenshots/low-risk.png)
+
+### High-Risk Customer Prediction
+
+![High-Risk Prediction](screenshots/high-risk.png)
+
+### Data Quality Validation
+
+![Data Quality Warning](screenshots/validation-warning.png)
+
+---
 
 ## 🏗️ System Architecture
 
 ```text
-                    Customer
-                       │
-                       ▼
-               React Frontend
-                       │
-                       ▼
-              Input Validation
-                       │
-                       ▼
-               FastAPI Backend
-                       │
-                       ▼
+                    React Frontend
+                         │
+                         │ Customer Data
+                         ▼
+                 FastAPI REST API
+                         │
+                         ▼
               Data Preprocessing
-                       │
-                       ▼
-             Logistic Regression
-                       │
-              ┌────────┴────────┐
-              ▼                 ▼
-       Churn Probability    Risk Level
-              │
-              ▼
-        Feature Explanation
-              │
-              ▼
-             React
+                         │
+                ┌────────┴────────┐
+                │                 │
+          Preprocessor          Scaler
+                │                 │
+                └────────┬────────┘
+                         ▼
+                 Logistic Regression
+                         │
+                         ▼
+              Churn Probability
+                         │
+                ┌────────┴────────┐
+                ▼                 ▼
+           Risk Level       Feature Explanation
+                │                 │
+                └────────┬────────┘
+                         ▼
+                  React Dashboard
 ```
+
+---
 
 ## 🛠️ Tech Stack
 
@@ -205,7 +297,6 @@ This validation is separate from the machine learning model.
 - NumPy
 - Scikit-learn
 - Joblib
-- Jupyter / Google Colab
 
 ### Backend
 
@@ -224,32 +315,36 @@ This validation is separate from the machine learning model.
 
 ### Development
 
+- Google Colab
+- VS Code
 - Git
 - GitHub
-- VS Code
+
+---
 
 ## 📁 Project Structure
 
 ```text
-Customer-Churn-Prediction/
+customer-churn-prediction/
 │
 ├── backend/
 │   ├── main.py
 │   ├── churn_model.pkl
 │   ├── churn_preprocessor.pkl
 │   ├── churn_scaler.pkl
-│   └── requirements.txt
+│   ├── requirements.txt
+│   └── venv/
 │
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── CustomerForm.jsx
-│   │   │   ├── FeatureExplanation.jsx
-│   │   │   ├── FeatureSummary.jsx
-│   │   │   ├── FormSection.jsx
 │   │   │   ├── Header.jsx
+│   │   │   ├── CustomerForm.jsx
+│   │   │   ├── FormSection.jsx
 │   │   │   ├── PredictionCard.jsx
-│   │   │   └── RiskMeter.jsx
+│   │   │   ├── RiskMeter.jsx
+│   │   │   ├── FeatureSummary.jsx
+│   │   │   └── FeatureExplanation.jsx
 │   │   │
 │   │   ├── services/
 │   │   │   └── api.js
@@ -258,41 +353,49 @@ Customer-Churn-Prediction/
 │   │   │   └── chargesValidation.js
 │   │   │
 │   │   ├── App.jsx
-│   │   ├── index.css
-│   │   └── main.jsx
+│   │   ├── main.jsx
+│   │   └── index.css
 │   │
 │   ├── package.json
 │   └── vite.config.js
 │
+├── screenshots/
+│   ├── home.png
+│   ├── low-risk.png
+│   ├── high-risk.png
+│   └── validation-warning.png
+│
 ├── feature_reduction_colab.ipynb
-├── .gitignore
-└── README.md
+├── README.md
+└── .gitignore
 ```
+
+---
 
 ## ⚙️ How to Run Locally
 
-### 1. Clone the repository
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/Bs-2006/Customer-Churn-Prediction.git
 cd Customer-Churn-Prediction
 ```
 
-### 2. Backend Setup
+### 2. Start the Backend
 
-Go to the backend directory:
+Go to the backend folder:
 
 ```bash
 cd backend
 ```
 
-Create a virtual environment:
+Create and activate a virtual environment:
 
 ```bash
 python -m venv venv
 ```
 
-Activate it on Windows:
+Windows:
 
 ```bash
 venv\Scripts\activate
@@ -304,21 +407,23 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-Start the FastAPI server:
+Start FastAPI:
 
 ```bash
-uvicorn main:app --reload
+uvicorn main:app --reload --port 8000
 ```
 
-The backend will run at:
+The API will be available at:
 
 ```text
-http://127.0.0.1:8000
+http://localhost:8000
 ```
 
-### 3. Frontend Setup
+---
 
-Open another terminal and go to:
+### 3. Start the Frontend
+
+Open another terminal:
 
 ```bash
 cd frontend
@@ -342,15 +447,36 @@ The frontend will normally be available at:
 http://localhost:5173
 ```
 
+---
+
 ## 🔌 API
 
-### Prediction Endpoint
+### Health Check
 
-```text
+```http
+GET /
+```
+
+Example response:
+
+```json
+{
+  "status": "ok",
+  "service": "Churn Prediction API",
+  "features": 25,
+  "model_loaded": true,
+  "preprocessor_loaded": true,
+  "scaler_loaded": true
+}
+```
+
+### Prediction
+
+```http
 POST /predict
 ```
 
-The endpoint accepts the customer's 25 input features and returns:
+The endpoint accepts the 25 customer features and returns:
 
 ```json
 {
@@ -360,47 +486,190 @@ The endpoint accepts the customer's 25 input features and returns:
 }
 ```
 
-The response also includes the feature explanations used by the frontend.
+---
+
+## 🎚️ Risk Classification
+
+The application converts the predicted churn probability into a simple risk level.
+
+| Probability | Risk |
+|---|---|
+| `< 40%` | 🟢 LOW |
+| `40% – 70%` | 🟡 MEDIUM |
+| `> 70%` | 🔴 HIGH |
+
+This makes the ML output easier for users to understand.
+
+---
 
 ## 🧪 Testing
 
-The application was tested with:
+The application was tested using:
 
-- Normal low-risk customer
-- Normal high-risk customer
-- Unrealistic billing data
-- Missing/invalid input
+### Test 1 — Low-Risk Customer
 
-The validation layer correctly displays warnings for suspicious billing combinations while allowing predictions to continue.
+A long-tenure customer with:
 
-## 🎯 Project Goals
+- Two-year contract
+- High satisfaction
+- Multiple services
+- Online security
+- Online backup
+- Credit card payment
 
-The main goals of this project are to:
+Result:
 
-1. Build a practical machine learning classification model.
-2. Understand the complete ML workflow from data preparation to deployment.
-3. Integrate an ML model with a REST API.
-4. Build an interactive frontend for real-time predictions.
-5. Provide interpretable model predictions.
-6. Handle unrealistic and invalid user input.
+```text
+NOT CHURN
+LOW RISK
+```
+
+### Test 2 — High-Risk Customer
+
+A customer with:
+
+- One-month tenure
+- Month-to-month contract
+- Low satisfaction
+- Higher monthly charge
+- No online security
+- Several streaming services
+
+Result:
+
+```text
+CHURN
+HIGH RISK
+```
+
+### Test 3 — Unrealistic Financial Data
+
+A customer with:
+
+```text
+72 months tenure
+₹90 monthly charge
+₹90 total charges
+```
+
+Result:
+
+```text
+Validation warning displayed
+Prediction still completed
+```
+
+### Test 4 — Missing Required Field
+
+The application correctly rejects missing required inputs.
+
+---
+
+## 🔐 Data & Model Validation
+
+The backend validates incoming requests using Pydantic.
+
+Unexpected fields are rejected using:
+
+```text
+extra = "forbid"
+```
+
+The API also verifies that the expected **25 raw features** are provided.
+
+---
+
+## 💡 Key Learning Outcomes
+
+Through this project, I worked with:
+
+- Data cleaning
+- Missing-value handling
+- Exploratory Data Analysis
+- Feature selection
+- Categorical encoding
+- Feature scaling
+- Train-test splitting
+- Class imbalance
+- Logistic Regression
+- Hyperparameter tuning
+- Model evaluation
+- Model explainability
+- REST API development
+- React frontend integration
+- Input validation
+- Git and GitHub
+
+---
 
 ## 🔮 Future Improvements
 
 Possible future improvements include:
 
-- Deploy the frontend and backend publicly.
-- Add customer retention recommendations.
-- Add model monitoring.
-- Add automated retraining pipelines.
-- Add authentication and user management.
-- Improve data validation using more domain-specific rules.
+- Deploy the application publicly
+- Add customer retention recommendations
+- Compare additional ML algorithms
+- Add model monitoring
+- Add authentication
+- Store prediction history
+- Add analytics dashboards
+- Improve automated data-quality checks
+
+---
+
+## 📌 Project Highlights
+
+- **25 practical customer features**
+- **95.74% test accuracy**
+- **92% churn F1-score**
+- Logistic Regression with hyperparameter tuning
+- FastAPI ML backend
+- React interactive dashboard
+- Real-time churn probability
+- LOW / MEDIUM / HIGH risk classification
+- Model-based prediction explanations
+- Realistic financial-data validation
+
+---
 
 ## 👩‍💻 Author
 
 **Bindhu Madhavi**
 
-B.Tech — Artificial Intelligence and Data Science
+B.Tech — Artificial Intelligence & Data Science
+
+Interested in:
+
+- Artificial Intelligence
+- Machine Learning
+- Software Engineering
+- Full-Stack Development
+- AI-powered applications
 
 ---
 
-⭐ If you find this project useful, consider giving the repository a star.
+## ⭐ Project Goal
+
+The goal of this project is to demonstrate how Machine Learning can be integrated into a complete software application to transform customer data into actionable churn-risk insights.
+
+Instead of only building a model in a notebook, this project demonstrates the complete workflow:
+
+```text
+Data
+ ↓
+EDA
+ ↓
+Feature Engineering
+ ↓
+Machine Learning
+ ↓
+Model Evaluation
+ ↓
+Explainability
+ ↓
+FastAPI
+ ↓
+React
+ ↓
+Real-Time Prediction
+```
